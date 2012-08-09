@@ -9,31 +9,44 @@ import java.lang.reflect.Method;
 import hypermedia.net.*;
 import java.io.*;
 
+/*
+// Disorient ACW settings
 int WIDTH = 16;
 int HEIGHT = 16;
-boolean VERTICAL = false;
+int addressing = Sculpture.ADDRESSING_VERTICAL_FLIPFLOP;
+*/
+
+// Want It! matrix display settings
+int WIDTH = 25;
+int HEIGHT = 12;
+int addressing = Sculpture.ADDRESSING_HORIZONTAL_NORMAL;
 int FRAMERATE = 30;
-String hostname = "127.0.0.1"; //"192.168.1.130";
+
+String[] hostnames = new String[] {
+  "127.0.0.1", // when using the emulator
+  //"192.168.1.130", // disorient on playa
+  "192.168.1.78", // want it! on playa
+};
 int TYPICAL_MODE_TIME = 300;
 
 Routine[] enabledRoutines = new Routine[] {
-  //  new Greetz(new String[] { "COUNTRY", "CLUB", "D12ORIENT" }),
-//    new Bursts(),
-  //  new FlashColors(),      /* rainbow */
-//    new Flash(),            /* seizure mode */
-  //  new Lines(),            /* boring */
-  //  new OppositeLines(),    /* boring */
-  //  new Waves(),            /* ? */
-//    new HorizonScan(),
-  //  new RadialStars(),
-  //  new NightSky(),
-  //  new TargetScanner(),
-//    new Warp(new Waterfalls(), true, false, 0.5, 0.25)
-  //  new RGBRoutine(), 
-  //  new FFTDemo(), 
-  //  new FollowMouse(),
+  new Greetz(new String[] { "ART CAR WASH" }),
+  //new Bursts(),
+  new FlashColors(),      /* rainbow */
+  //new Flash(),            /* seizure mode */
+  //new Lines(),            /* boring */
+  //new OppositeLines(),    /* boring */
+  //new Waves(),            /* ? */
+  //new HorizonScan(),
+  //new RadialStars(),
+  //new NightSky(),
+  //new TargetScanner(),
+  //new Warp(new Waterfalls(), true, false, 0.5, 0.25)
+  //new RGBRoutine(),
+  //new FFTDemo(),
+  //new FollowMouse(),
   //new Warp(new Greetz(new String[] { "COUNTRY CLUB", "D12ORIENT" }), false, true, 1, 0.25)
-  new Warp(null, true, true, 0.5, 0.25)
+  //new Warp(null, true, true, 0.5, 0.25)
 };
 
 int w = 0;
@@ -55,19 +68,19 @@ int fadeOutFrames = 0;
 int fadeInFrames = 0;
 
 WiiController controller;
-boolean isRGB = false;
+boolean isRGB = true;
 
 void setup() {
   // Had to enable OPENGL for some reason new fonts don't work in JAVA2D.
   size(WIDTH,HEIGHT);
 
   frameRate(FRAMERATE);
-  
-  dacwes = new Sculpture(this, WIDTH, HEIGHT, false);
-  dacwes.setAddress(hostname);
-  dacwes.setAddressingMode(Sculpture.ADDRESSING_VERTICAL_FLIPFLOP);
 
-  setMode(0);  
+  dacwes = new Sculpture(this, WIDTH, HEIGHT, isRGB);
+  dacwes.setAddress(hostnames[0]);
+  dacwes.setAddressingMode(addressing);
+
+  setMode(0);
 
   controller = new WiiController();
 
@@ -141,7 +154,10 @@ void draw() {
     newMode();
   }
 //  println(frameRate);
-  dacwes.sendData();  
+  for (String hostname : hostnames) {
+    dacwes.setAddress(hostname);
+    dacwes.sendData();
+  }
 }
 
 

@@ -1,5 +1,5 @@
 class Greetz extends Routine {
-  int FONT_SIZE = 16;
+  int FONT_SIZE = HEIGHT >= 16 ? 16 : 8;
   PFont font;
   PImage imgCopy;
   String messages[] = new String[] {
